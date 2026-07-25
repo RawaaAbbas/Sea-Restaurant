@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -78,6 +79,13 @@ export default function AuthPage() {
           >
             {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
           </button>
+
+          <Link
+            href="/register"
+            className="mt-4 block text-center text-sm text-slate-400 hover:underline"
+          >
+            ليس لديك حساب؟ إنشاء حساب جديد
+          </Link>
         </form>
       </div>
     </div>
