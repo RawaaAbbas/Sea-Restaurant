@@ -45,20 +45,27 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const sessionToken =
-    request.cookies.get("authjs.session-token")?.value ||
     request.cookies.get("__Secure-authjs.session-token")?.value ||
-    request.cookies.get("next-auth.session-token")?.value ||
-    request.cookies.get("__Secure-next-auth.session-token")?.value;
+    request.cookies.get("authjs.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value ||
+    request.cookies.get("next-auth.session-token")?.value;
 
-  if (request.nextUrl.pathname.startsWith("/admin") && !sessionToken) {
+  const isLoginPage = request.nextUrl.pathname.startsWith("/login");
+  const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
+
+  // إذا رايح للأدمن وماكو توكن -> ارجع للـ login
+  if (isAdminPage && !sessionToken) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // إذا هو مسجل دخول وفتح الـ login -> حوله للأدمن مباشرة
+  if (isLoginPage && sessionToken) {
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/admin/:path*", "/login"],
 };
