@@ -95,12 +95,20 @@ export default function AdminDashboard() {
           const incomingReservations = data.reservations || [];
 
           // ⏳ ترتيب من الأحدث للأقدم بناءً على تاريخ التقديم
+          // const sortedReservations = incomingReservations.sort(
+          //   (a: Reservation, b: Reservation) => {
+          //     return (
+          //       new Date(b.createdAt).getTime() -
+          //       new Date(a.createdAt).getTime()
+          //     );
+          //   },
+          // );
+
           const sortedReservations = incomingReservations.sort(
             (a: Reservation, b: Reservation) => {
-              return (
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-              );
+              const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+              const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+              return timeB - timeA;
             },
           );
 
