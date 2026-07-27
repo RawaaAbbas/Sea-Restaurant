@@ -89,7 +89,7 @@ export default function AdminDashboard() {
           return;
         }
 
-        const res = await fetch("/api/reservation");
+        const res = await fetch("/api/reservation", { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           const incomingReservations = data.reservations || [];
