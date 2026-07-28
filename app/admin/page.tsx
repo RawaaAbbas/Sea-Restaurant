@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [prevPendingCount, setPrevPendingCount] = useState<number | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -81,11 +81,23 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    // async function checkAuthAndGetReservations() {
+    //   try {
+    //     const isAuthenticated = localStorage.getItem("isAdminAuthenticated");
+    //     if (!isAuthenticated) {
+    //       router.push("/login");
+    //       return;
+    //     }
+
+    //     const res = await fetch("/api/reservation", { cache: "no-store" });
+
     async function checkAuthAndGetReservations() {
       try {
-        const isAuthenticated = localStorage.getItem("isAdminAuthenticated");
-        if (!isAuthenticated) {
+        if (status === "unauthenticated") {
           router.push("/login");
+          return;
+        }
+        if (status !== "authenticated") {
           return;
         }
 
@@ -155,7 +167,7 @@ export default function AdminDashboard() {
     // ⏳ فحص تلقائي ودوري كل 5 ثوانٍ بالخلفية بدون ريفريش
     const interval = setInterval(checkAuthAndGetReservations, 5000);
     return () => clearInterval(interval);
-  }, [prevPendingCount, router]);
+  }, [prevPendingCount, router, status]);
 
   async function updateStatus(id: string, newStatus: string) {
     try {
